@@ -6,7 +6,7 @@ Note: This code is used as the practice of the paper, and there are few optimiza
 
 ## Install
 
-```
+```bash
 pip install p-stable-lsh-python
 ```
 
@@ -16,7 +16,7 @@ pip install p-stable-lsh-python
 
 The following example shows all features of the package, If you want to know the details, please refer to the source code and comments.
 
-```
+```python
 import numpy as np
 import p_stable_lsh.pstable as psl
 
@@ -39,3 +39,29 @@ m2.lsh(data[1])
 print(m1.md(m2)) # estimate value
 print(m1.p(np.sqrt(sum([i**2 for i in data[0]-data[1]])))) # theoretical(true) value
 ```
+
+### Parameters
+
+The parameter $r$ in paper determines the relationship between the distance (in metric space) between vectors and the probability of collision (the `.md` method). The following shows different probability results varied by $r$.
+
+#### L1 metric space
+
+Data points code
+
+```python
+import p_stable_lsh.pstable as psl
+r_list = [10, 30, 50, 100, 300, ]
+result = []
+for r in r_list:
+    tmp = []
+    m = psl.pstable(r, dim, metric_dim=1)
+    for i in range(1, 800):
+        tmp.append(m.p(i))
+    result.append(tmp)
+```
+
+![benchmark in L1 distance](./benchmark/l1.png)
+
+#### L2 metric space
+
+![benchmark in L2 distance](./benchmark/l2.png)
