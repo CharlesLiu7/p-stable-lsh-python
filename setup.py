@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="p-stable-lsh-python",
-    version="0.0.1",
+    version="0.0.2",
     author="Charles7",
     author_email="liuhuiqi@mail.ustc.edu.cn",
     description="A 1&2-stable Locality-Sensitive Hashing implementation in Python",
