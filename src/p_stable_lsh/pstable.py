@@ -4,7 +4,7 @@ import numpy as np
 
 
 class pstable:
-    def __init__(self, r, metric_dim=2, seed=1, num_perm=1024):
+    def __init__(self, r, dim, metric_dim=2, seed=1, num_perm=1024):
         self.r = r
         self.seed = seed
         self.gen = np.random.RandomState(self.seed)
@@ -18,6 +18,8 @@ class pstable:
         else:
             raise ValueError("Only support L_1 and L_2 distance metric.")
         self.num_perm = num_perm
+        self.dim = dim
+        self.wb = [self.param_gen(self.dim) for _ in range(self.num_perm)]
 
     def param_normal_gen(self, dim):
         mu, sigma = 0, 1
@@ -32,13 +34,16 @@ class pstable:
 
     def lsh(self, x):
         dim = len(x)
-        wb = [self.param_gen(dim) for _ in range(self.num_perm)]
+        if dim != self.dim:
+            raise ValueError("Vector dimension mismatch")
         self.hashvalues = np.array(
-            [np.floor((np.dot(w, x)+b)/self.r) for w, b in wb])
+            [np.floor((np.dot(w, x)+b)/self.r) for w, b in self.wb])
 
     def jaccard(self, other):
         if other.seed != self.seed:
             raise ValueError("Cannot compute given PSLSH with different seeds")
+        if other.dim != self.dim:
+            raise ValueError("Cannot compute given PSLSH with different vector dimension")
         if other.num_perm != self.num_perm:
             raise ValueError(
                 "Cannot compute given PSLSH with different numbers of permutation functions")
