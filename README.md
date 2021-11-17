@@ -4,7 +4,7 @@ The package is one implementation of paper Locality-Sensitive Hashing Scheme Bas
 
 Note: This code is used as the practice of the paper, and there are few optimizations. Sharing is for communication and learning. If it is a high-performance scenario, please optimize as appropriate.
 
-## Install
+## Installation
 
 ```bash
 pip install p-stable-lsh-python
@@ -38,6 +38,59 @@ m2 = psl.pstable(r, dim, metric_dim=2)
 m2.lsh(data[1])
 print(m1.md(m2)) # estimate value
 print(m1.p(np.sqrt(sum([i**2 for i in data[0]-data[1]])))) # theoretical(true) value
+```
+
+### Use case
+
+Define the parameter $r$ and vector dimension for preparing the test data:
+
+```python
+import numpy as np
+import p_stable_lsh.pstable as psl
+r = 50.0 # the parameter $r$ in paper
+dim = 100 # vector dimension
+data = [np.random.random(dim) for _ in range(3)] # generate two vectors
+```
+
+Instantiate `pstable` object with specific dimension space. ($L_1$ for example)
+
+```python
+m1 = psl.pstable(r, dim, metric_dim=1)
+m2 = psl.pstable(r, dim, metric_dim=1)
+```
+
+Hash vectors with p-stable LSH function.
+
+```python
+m1.lsh(data[0])
+m2.lsh(data[1])
+```
+
+Estimate distance between two object.
+
+```python
+m1.md(m2) # estimate value
+```
+
+Show the ground truth distance probability using integration shown in paper.
+
+```python
+l1_distance = np.average(sum(np.abs(data[0]-data[1])))
+m1.p(l1_distance)
+```
+
+Another way to instantiate `pstable` object with hash values.
+
+```python
+m3 = psl.pstable(r, dim, metric_dim=1, hashvalues=m1.hashvalues)
+m3.md(m2)
+```
+
+Update object hash values with different vector.
+
+```python
+m2.lsh(data[2])
+m3.md(m2)
 ```
 
 ### Parameters

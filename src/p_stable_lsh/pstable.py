@@ -13,7 +13,7 @@ class pstable:
         optimize as appropriate.
     """
 
-    def __init__(self, r, dim, metric_dim=2, seed=1, num_perm=1024):
+    def __init__(self, r, dim, metric_dim=2, seed=1, num_perm=1024, hashvalues=None):
         """
         Args:
             r (int): The size of equi-width segments $r$ in paper.
@@ -21,16 +21,20 @@ class pstable:
             metric_dim (int): The metric $p$ for $L_p$ distance.
             seed (int, optional): The random seed controls the set of random permutation functions generated.
             num_perm (int, optional): Number of random permutation functions.
+            hashvalues (`numpy.array` or `list`, optional): The hash values is the internal state of the `pstable.hashvalues`.
+            It can be specified for faster initialization using the existing state from another pstable.
         """
         self.r = r
         self.seed = seed
         self.metric_dim = metric_dim
         self.num_perm = num_perm
         self.dim = dim
+        if hashvalues is not None:
+            self.hashvalues = hashvalues
         self.__init_permutations()
 
     def __init_permutations(self):
-        """Create parameters from a random generation function
+        """Create parameters from a random generation function. Numpy random generator makes the hash values consistent across different Python versions.
         """
         self.gen = np.random.RandomState(self.seed)
         if self.metric_dim == 1:
